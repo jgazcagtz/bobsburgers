@@ -1,0 +1,64 @@
+{
+  "name": "Bob's Burgers - Sayulita's Finest",
+  "short_name": "Bob's Burgers",
+  "description": "Las mejores hamburguesas de Sayulita. Menú digital con entrega a domicilio y recoger en sucursal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FF6B35",
+  "theme_color": "#FF6B35",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["food", "restaurant", "shopping"],
+  "icons": [
+    {
+      "src": "https://i.imgur.com/s611vPH.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.imgur.com/s611vPH.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://i.imgur.com/s611vPH.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver Menú",
+      "short_name": "Menú",
+      "description": "Explora nuestro delicioso menú",
+      "url": "/#menu",
+      "icons": [
+        {
+          "src": "https://i.imgur.com/s611vPH.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Carrito",
+      "short_name": "Carrito",
+      "description": "Ver tu carrito de compras",
+      "url": "/#cart",
+      "icons": [
+        {
+          "src": "https://i.imgur.com/s611vPH.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
