@@ -255,30 +255,32 @@
                     
                     <div class="payment-options">
                         <div class="payment-option">
-                            <h4>Pagar con PayPal</h4>
+                            <h4>💳 Pagar con PayPal</h4>
                             <div id="paypal-form"></div>
+                            <p class="payment-note">Después de pagar, regresa aquí y confirma tu pago</p>
                         </div>
                         
                         <div class="payment-option">
-                            <h4>Pagar con Mercado Pago</h4>
-                            <a href="https://link.mercadopago.com.mx/segurodeviajes" target="_blank" class="payment-btn mercado-pago">
+                            <h4>💳 Pagar con Mercado Pago</h4>
+                            <a href="https://link.mercadopago.com.mx/segurodeviajes" target="_blank" class="payment-btn mercado-pago" id="mercado-pago-btn">
                                 <i class="fas fa-credit-card"></i>
-                                Mercado Pago
+                                Pagar con Mercado Pago
                             </a>
+                            <p class="payment-note">Después de pagar, regresa aquí y confirma tu pago</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="cart-actions">
-                <button class="btn btn-primary btn-full" id="submit-order">
-                    <i class="fas fa-paper-plane"></i>
-                    Enviar Pedido
-                </button>
                 <a href="#" id="whatsapp-btn" class="btn btn-success btn-full" target="_blank">
                     <i class="fab fa-whatsapp"></i>
-                    Confirmar por WhatsApp
+                    Confirmar Pedido por WhatsApp
                 </a>
+                <button class="btn btn-primary btn-full" id="paid-online-btn" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Ya Pagué en Línea!
+                </button>
                 <button class="btn btn-secondary btn-full" id="clear-cart">
                     <i class="fas fa-trash"></i>
                     Limpiar Carrito

@@ -266,9 +266,10 @@ class BobsBurgersApp {
         document.getElementById('menu-toggle')?.addEventListener('click', () => this.toggleMobileMenu());
 
         // Cart actions
-        document.getElementById('submit-order')?.addEventListener('click', () => this.submitOrder());
         document.getElementById('clear-cart')?.addEventListener('click', () => this.clearCart());
         document.getElementById('whatsapp-btn')?.addEventListener('click', () => this.updateWhatsAppLink());
+        document.getElementById('paid-online-btn')?.addEventListener('click', () => this.confirmOnlinePayment());
+        document.getElementById('mercado-pago-btn')?.addEventListener('click', () => this.trackMercadoPagoClick());
 
         // Filters
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -514,6 +515,9 @@ class BobsBurgersApp {
         // Update PayPal form
         this.updatePayPalForm();
         this.updateWhatsAppLink();
+        
+        // Update payment method change listener
+        this.setupPaymentMethodListener();
     }
 
     updateCartItemQuantity(itemId, change) {
@@ -538,6 +542,20 @@ class BobsBurgersApp {
         this.cart = [];
         this.updateCart();
         this.showNotification('Carrito limpiado', 'info');
+    }
+
+    setupPaymentMethodListener() {
+        // Remove existing listeners to avoid duplicates
+        const existingListeners = document.querySelectorAll('[data-payment-listener]');
+        existingListeners.forEach(el => el.removeAttribute('data-payment-listener'));
+        
+        // Add listener to payment method radio buttons
+        document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updateWhatsAppLink();
+            });
+            radio.setAttribute('data-payment-listener', 'true');
+        });
     }
 
     updateDeliveryFee() {
@@ -576,8 +594,11 @@ class BobsBurgersApp {
 
     updateWhatsAppLink() {
         const whatsappBtn = document.getElementById('whatsapp-btn');
+        const paidOnlineBtn = document.getElementById('paid-online-btn');
+        
         if (this.cart.length === 0) {
             whatsappBtn.style.display = 'none';
+            paidOnlineBtn.style.display = 'none';
             return;
         }
         
@@ -586,6 +607,15 @@ class BobsBurgersApp {
         const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'En línea';
         const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked')?.value || 'A Domicilio';
         const distance = document.getElementById('delivery-distance').value || '0';
+        
+        // Show appropriate button based on payment method
+        if (paymentMethod === 'En línea') {
+            whatsappBtn.style.display = 'none';
+            paidOnlineBtn.style.display = 'flex';
+        } else {
+            whatsappBtn.style.display = 'flex';
+            paidOnlineBtn.style.display = 'none';
+        }
         
         const message = `🍔 *Nuevo Pedido - Bob's Burgers* 🍔
 
@@ -605,10 +635,16 @@ ${this.cart.map(item => `• ${item.name} x${item.quantity} - $${item.price} c/u
 
         const encodedMessage = encodeURIComponent(message);
         whatsappBtn.href = `https://wa.me/525533355687?text=${encodedMessage}`;
-        whatsappBtn.style.display = 'flex';
     }
 
-    submitOrder() {
+    trackMercadoPagoClick() {
+        // Track when user clicks Mercado Pago button
+        this.showNotification('Redirigiendo a Mercado Pago...', 'info');
+        localStorage.setItem('paymentAttempted', 'true');
+        localStorage.setItem('paymentMethod', 'Mercado Pago');
+    }
+
+    confirmOnlinePayment() {
         if (this.cart.length === 0) {
             this.showNotification('Tu carrito está vacío', 'warning');
             return;
@@ -618,49 +654,42 @@ ${this.cart.map(item => `• ${item.name} x${item.quantity} - $${item.price} c/u
             this.orderNumber = Math.floor(Math.random() * 1000000) + 1;
         }
         
-        const orderData = {
-            timestamp: new Date().toLocaleString(),
-            orderNumber: this.orderNumber,
-            deliveryAddress: document.getElementById('delivery-address').value || 'No especificada',
-            orderNotes: document.getElementById('order-notes').value || 'Sin notas adicionales',
-            paymentMethod: document.querySelector('input[name="payment-method"]:checked')?.value || 'En línea',
-            deliveryMethod: document.querySelector('input[name="delivery-method"]:checked')?.value || 'A Domicilio',
-            deliveryDistance: document.getElementById('delivery-distance').value || '0',
-            deliveryFee: this.deliveryFee.toFixed(2),
-            cart: JSON.stringify(this.cart),
-            total: (this.total + this.deliveryFee).toFixed(2)
-        };
+        const deliveryAddress = document.getElementById('delivery-address').value || 'No especificada';
+        const orderNotes = document.getElementById('order-notes').value || 'Sin notas adicionales';
+        const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked')?.value || 'A Domicilio';
+        const distance = document.getElementById('delivery-distance').value || '0';
         
-        // Show loading state
-        const submitBtn = document.getElementById('submit-order');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-        submitBtn.disabled = true;
+        const message = `✅ *CONFIRMACIÓN DE PAGO - Bob's Burgers* ✅
+
+🎉 *¡Pago Confirmado!* 🎉
+
+📋 *Detalles del Pedido:*
+${this.cart.map(item => `• ${item.name} x${item.quantity} - $${item.price} c/u`).join('\n')}
+
+💰 *Total Pagado: $${(this.total + this.deliveryFee).toFixed(2)}*
+🚚 *Método de entrega: ${deliveryMethod}*
+💳 *Pago: En línea (PayPal/Mercado Pago)*
+🏠 *Dirección: ${deliveryAddress}*
+📏 *Distancia: ${distance} km*
+🚚 *Costo de envío: $${this.deliveryFee.toFixed(2)}*
+
+📝 *Notas: ${orderNotes}*
+
+🆔 *Número de Orden: #${this.orderNumber}*
+
+¡Gracias por tu pago! Tu pedido será preparado pronto 🔥`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/525533355687?text=${encodedMessage}`;
         
-        // Send order (simulated)
+        // Show success message
+        this.showNotification('¡Pago confirmado! Redirigiendo a WhatsApp...', 'success');
+        
+        // Open WhatsApp after a short delay
         setTimeout(() => {
-            this.showNotification('¡Pedido enviado correctamente!', 'success');
-            this.updateWhatsAppLink();
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 2000);
-        
-        // In a real app, you would send to your backend:
-        /*
-        fetch('https://script.google.com/macros/s/AKfycbxB9-728OnNnromP-oOQStESL_srYAQ_aXb2Wv1bROiqlq5jMcLTvYEHjDuzzHBrrWh/exec', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
-        })
-        .then(response => {
-            this.showNotification('¡Pedido enviado correctamente!', 'success');
-            this.updateWhatsAppLink();
-        })
-        .catch(error => {
-            this.showNotification('Error al enviar el pedido', 'error');
-        });
-        */
+            window.open(whatsappUrl, '_blank');
+            this.clearCart();
+        }, 1500);
     }
 
     openProductModal(productId) {

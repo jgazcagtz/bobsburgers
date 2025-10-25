@@ -1159,6 +1159,18 @@ body {
     height: auto;
 }
 
+.payment-note {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    margin-top: var(--space-sm);
+    text-align: center;
+    font-style: italic;
+    background: var(--gray-50);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--primary);
+}
+
 .cart-actions {
     padding: var(--space-lg);
     border-top: 1px solid var(--gray-200);
@@ -1210,6 +1222,18 @@ body {
 }
 
 .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+#paid-online-btn {
+    background: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
+    color: var(--white);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+#paid-online-btn:hover {
+    background: linear-gradient(135deg, #38A169 0%, #2F855A 100%);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
