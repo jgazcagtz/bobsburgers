@@ -295,6 +295,9 @@ class BobsBurgersApp {
                 this.closeModal();
                 this.closePromoModal();
             }
+            if (e.target.classList.contains('cart-sidebar')) {
+                this.toggleCart();
+            }
         });
 
         // Keyboard navigation
@@ -302,7 +305,10 @@ class BobsBurgersApp {
             if (e.key === 'Escape') {
                 this.closeModal();
                 this.closePromoModal();
-                this.toggleCart();
+                const cartSidebar = document.getElementById('cart-sidebar');
+                if (cartSidebar.classList.contains('open')) {
+                    this.toggleCart();
+                }
             }
         });
     }
@@ -341,11 +347,11 @@ class BobsBurgersApp {
         const cartSidebar = document.getElementById('cart-sidebar');
         cartSidebar.classList.toggle('open');
         
-        // Add animation class
+        // Prevent body scroll when cart is open
         if (cartSidebar.classList.contains('open')) {
-            cartSidebar.style.animation = 'slideInRight 0.3s ease';
+            document.body.style.overflow = 'hidden';
         } else {
-            cartSidebar.style.animation = 'slideOutRight 0.3s ease';
+            document.body.style.overflow = 'auto';
         }
     }
 
